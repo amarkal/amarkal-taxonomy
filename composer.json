@@ -1,0 +1,16 @@
+{
+    "name": "askupa-software/amarkal-taxonomy",
+    "description": "A set of utility functions for taxonomies in WordPress",
+    "type": "wordpress",
+    "keywords": ["wordpress","admin","ui","form","user interface", "taxonomy"],
+    "homepage": "https://github.com/askupasoftware/amarkal-taxonomy",
+    "authors": [
+        {
+            "name": "Askupa Software",
+            "email": "contact@askupasoftware.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0"
+    }
+}

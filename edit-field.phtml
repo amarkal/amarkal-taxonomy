@@ -1,0 +1,7 @@
+<tr class="form-field">
+    <th scope="row" valign="top"><label for="<?php echo $this->name ?>"><?php echo $this->label ?></label></th>
+    <td>
+        <?php echo amarkal_ui_render($this->type,array('name'=>$this->name, 'value'=>get_term_meta($this->term_id, $this->name, true))); ?>
+        <p class="description"><?php echo $this->description ?></p>
+    </td>
+</tr>
