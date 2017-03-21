@@ -4,7 +4,7 @@ A set of utility functions for taxonomies in WordPress.
 **Tested up to:** WordPress 4.7  
 **Dependencies**: *[amarkal-ui](https://github.com/askupasoftware/amarkal-ui)*
 
-
+![amarkal-taxonomy](https://askupasoftware.com/wp-content/uploads/2015/04/amarkal-taxonomy.png)
 
 ## Overview
 Using **amarkal-taxonomy** you can easily modify the taxonomy forms in the WordPress admin area and add custom fields to them. More utility functions will be added in the future.
