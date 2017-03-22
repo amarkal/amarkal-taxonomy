@@ -1,7 +1,7 @@
-<tr class="form-field">
+<tr class="form-field <?php echo ($this->required ? 'form-required' : ''); ?>">
     <th scope="row" valign="top"><label for="<?php echo $this->name ?>"><?php echo $this->label ?></label></th>
     <td>
-        <?php echo amarkal_ui_render($this->type,array('name'=>$this->name, 'value'=>get_term_meta($this->term_id, $this->name, true))); ?>
+        <?php echo amarkal_ui_render($this->type,$this->get_model()); ?>
         <p class="description"><?php echo $this->description ?></p>
     </td>
 </tr>

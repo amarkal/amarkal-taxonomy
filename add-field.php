@@ -5,6 +5,15 @@ namespace Amarkal\Taxonomy;
 class AddField
 extends \Amarkal\UI\AbstractComponent
 {
+    public function default_model() 
+    {
+        return array(
+            'type'          => '',
+            'label'         => '',
+            'description'   => ''
+        );
+    }
+    
     public function get_script_path() 
     {
         return __DIR__.'/add-field.phtml';

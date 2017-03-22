@@ -51,12 +51,18 @@ class Form
             add_action( "create_{$taxonomy_name}", array($this, 'update_term') );
             add_action( "edited_{$taxonomy_name}", array($this, 'update_term') );
             
+            // Modify the taxonomy term table
+            add_filter( "manage_edit-{$taxonomy_name}_columns", array($this, 'modify_table_columns') );
+            add_filter( "manage_{$taxonomy_name}_custom_column", array($this, 'modify_table_content'), 10, 3 );
+            add_filter( "manage_edit-{$taxonomy_name}_sortable_columns", array($this, 'modify_table_sortable_columns') );
+            add_filter( 'terms_clauses', array($this, 'sort_custom_column'), 10, 3 );
+            
             $this->fields[$taxonomy_name] = array();
         }
 
         if( !isset($this->fields[$taxonomy_name][$field_name]))
         {
-            $this->fields[$taxonomy_name][$field_name] = $field_props;
+            $this->fields[$taxonomy_name][$field_name] = array_merge( $this->default_props(), $field_props );
         }
         else throw new \RuntimeException("A field named '$field_name' has already been registered in '$taxonomy_name'");
     }
@@ -113,5 +119,143 @@ class Form
                 update_term_meta($term_id, $name, filter_input(INPUT_POST, $name));
             }
         }
+    }
+    
+    /**
+     * Add additional columns to the term table.
+     * 
+     * @param array $columns
+     * @return array
+     */
+    function modify_table_columns( $columns )
+    {   
+        foreach( $this->fields as $fields )
+        {
+            foreach( $fields as $name => $props )
+            {
+                if( $props['table']['show'] )
+                {
+                    $columns[$name] = $props['label'];
+                }
+            }
+        }
+        return $columns;
+    }
+    
+    /**
+     * Retrieve the data for a given column in the term table.
+     * 
+     * @see https://developer.wordpress.org/reference/hooks/manage_this-screen-taxonomy_custom_column/
+     * 
+     * @param type $content
+     * @param type $column_name
+     * @param type $term_id
+     * @return type
+     */
+    function modify_table_content( $content, $column_name, $term_id )
+    {   
+        $term = \get_term($term_id);
+        foreach( $this->fields as $taxonomy => $fields )
+        {
+            foreach( $fields as $name => $props )
+            {
+                if( $props['table']['show'] && 
+                    $term->taxonomy === $taxonomy &&
+                    $name === $column_name
+                ) {
+                    $content = \get_term_meta($term_id, $name, true);
+                }
+            }
+        }
+        return $content;
+    }
+    
+    /**
+     * Make custom table columns sortable.
+     * 
+     * @param array $columns
+     * @return string
+     */
+    function modify_table_sortable_columns( $columns )
+    {
+        foreach( $this->fields as $taxonomy => $fields )
+        {
+            foreach( $fields as $name => $props )
+            {
+                if( $props['table']['show'] && 
+                    $props['table']['sortable']
+                ) {
+                    $columns[$name] = $name;
+                }
+            }
+        }
+        return $columns;
+    }
+    
+    /**
+     * Modify terms_clauses to allow sorting custom WordPress Admin Table Columns by a custom Taxonomy Term meta
+     * 
+     * @see https://developer.wordpress.org/reference/hooks/terms_clauses/
+     * 
+     * @global type $wpdb
+     * @param type $clauses
+     * @param type $taxonomies
+     * @param type $args
+     * @return string
+     */
+    function sort_custom_column( $clauses, $taxonomies, $args )
+    {
+        foreach( $this->fields as $taxonomy => $fields )
+        {
+            // if( in_array($taxonomy, $args['taxonomy']) && 'icon' === $args['orderby'])
+            foreach( $fields as $name => $props )
+            {
+                if( in_array($taxonomy, $args['taxonomy']) && 
+                    $props['table']['show'] && 
+                    $props['table']['sortable'] &&
+                    $name === $args['orderby']
+                )
+                {
+                    $this->modify_term_clauses( $clauses, $taxonomy, $name );
+                }
+            }
+        }
+        return $clauses;
+    }
+    
+    /**
+     * Modify the orderby clauses for a given taxonomy
+     * 
+     * @param array $clauses
+     * @param string $taxonomy
+     * @param string $termmeta
+     */
+    function modify_term_clauses( &$clauses, $taxonomy, $termmeta )
+    {
+        global $wpdb;
+        // tt refers to the $wpdb->term_taxonomy table
+        $clauses['join'] .= " LEFT JOIN {$wpdb->termmeta} AS tm ON t.term_id = tm.term_id";
+        $clauses['where'] = "tt.taxonomy = '{$taxonomy}' AND (tm.meta_key = '{$termmeta}' OR tm.meta_key IS NULL)";
+        $clauses['orderby'] = "ORDER BY tm.meta_value";
+    }
+    
+    /**
+     * The default form field properties. This is merged with the user given 
+     * properties. When the component is rendered, this will be merged with the
+     * component's properties as well.
+     * 
+     * @return array
+     */
+    private function default_props()
+    {
+        return array(
+            'type'          => null,
+            'label'         => null,
+            'description'   => null,
+            'table'         => array(
+                'show'      => false,
+                'sortable'  => false
+            )
+        );
     }
 }
