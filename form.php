@@ -129,16 +129,13 @@ class Form
      */
     function modify_table_columns( $columns )
     {   
-        foreach( $this->fields as $fields )
+        $this->traverse_fields(function( $taxonomy, $name, $props ) use ( &$columns ) 
         {
-            foreach( $fields as $name => $props )
+            if( $props['table']['show'] )
             {
-                if( $props['table']['show'] )
-                {
-                    $columns[$name] = $props['label'];
-                }
+                $columns[$name] = $props['label'];
             }
-        }
+        });
         return $columns;
     }
     
@@ -155,18 +152,15 @@ class Form
     function modify_table_content( $content, $column_name, $term_id )
     {   
         $term = \get_term($term_id);
-        foreach( $this->fields as $taxonomy => $fields )
+        $this->traverse_fields(function( $taxonomy, $name, $props ) use ( &$content, $column_name, $term ) 
         {
-            foreach( $fields as $name => $props )
-            {
-                if( $props['table']['show'] && 
-                    $term->taxonomy === $taxonomy &&
-                    $name === $column_name
-                ) {
-                    $content = \get_term_meta($term_id, $name, true);
-                }
+            if( $props['table']['show'] && 
+                $term->taxonomy === $taxonomy &&
+                $name === $column_name
+            ) {
+                $content = \get_term_meta($term->term_id, $name, true);
             }
-        }
+        });
         return $content;
     }
     
@@ -178,17 +172,14 @@ class Form
      */
     function modify_table_sortable_columns( $columns )
     {
-        foreach( $this->fields as $taxonomy => $fields )
+        $this->traverse_fields(function( $taxonomy, $name, $props ) use ( &$columns ) 
         {
-            foreach( $fields as $name => $props )
-            {
-                if( $props['table']['show'] && 
-                    $props['table']['sortable']
-                ) {
-                    $columns[$name] = $name;
-                }
+            if( $props['table']['show'] && 
+                $props['table']['sortable']
+            ) {
+                $columns[$name] = $name;
             }
-        }
+        });
         return $columns;
     }
     
@@ -205,38 +196,22 @@ class Form
      */
     function sort_custom_column( $clauses, $taxonomies, $args )
     {
-        foreach( $this->fields as $taxonomy => $fields )
+        $this->traverse_fields(function( $taxonomy, $name, $props ) use ( &$clauses, $args ) 
         {
-            // if( in_array($taxonomy, $args['taxonomy']) && 'icon' === $args['orderby'])
-            foreach( $fields as $name => $props )
+            if( in_array($taxonomy, $args['taxonomy']) && 
+                $props['table']['show'] && 
+                $props['table']['sortable'] &&
+                $name === $args['orderby']
+            )
             {
-                if( in_array($taxonomy, $args['taxonomy']) && 
-                    $props['table']['show'] && 
-                    $props['table']['sortable'] &&
-                    $name === $args['orderby']
-                )
-                {
-                    $this->modify_term_clauses( $clauses, $taxonomy, $name );
-                }
+                global $wpdb;
+                // tt refers to the $wpdb->term_taxonomy table
+                $clauses['join'] .= " LEFT JOIN {$wpdb->termmeta} AS tm ON t.term_id = tm.term_id";
+                $clauses['where'] = "tt.taxonomy = '{$taxonomy}' AND (tm.meta_key = '{$name}' OR tm.meta_key IS NULL)";
+                $clauses['orderby'] = "ORDER BY tm.meta_value";
             }
-        }
+        });
         return $clauses;
-    }
-    
-    /**
-     * Modify the orderby clauses for a given taxonomy
-     * 
-     * @param array $clauses
-     * @param string $taxonomy
-     * @param string $termmeta
-     */
-    function modify_term_clauses( &$clauses, $taxonomy, $termmeta )
-    {
-        global $wpdb;
-        // tt refers to the $wpdb->term_taxonomy table
-        $clauses['join'] .= " LEFT JOIN {$wpdb->termmeta} AS tm ON t.term_id = tm.term_id";
-        $clauses['where'] = "tt.taxonomy = '{$taxonomy}' AND (tm.meta_key = '{$termmeta}' OR tm.meta_key IS NULL)";
-        $clauses['orderby'] = "ORDER BY tm.meta_value";
     }
     
     /**
@@ -257,5 +232,21 @@ class Form
                 'sortable'  => false
             )
         );
+    }
+    
+    /**
+     * Treverse the $fields array.
+     * 
+     * @param collable $callback Called on each iteration
+     */
+    private function traverse_fields( $callback )
+    {
+        foreach( $this->fields as $taxonomy => $fields )
+        {
+            foreach( $fields as $name => $props )
+            {
+                $callback( $taxonomy, $name, $props );
+            }
+        }
     }
 }
