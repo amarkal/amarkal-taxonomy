@@ -57,8 +57,9 @@ This function can be used to add fields to the 'add term' and 'edit term' taxono
 
 **Parameters**  
 * `$taxonomy_name` (*String*) Specifies the taxonomy name, e.g. 'category'.
-* `$field_type` (*String*)  Specifies the type of the field to add. One of the core `amarkal-ui` components or a registered custom component.
+* `$field_name` (*String*)  Specifies the name/id of the field.
 * `$field_props` (*Array*)  Specifies the UI component's properties. This array should have the original UI component properties as specified in [amarkal-ui](https://github.com/askupasoftware/amarkal-ui), as well as the following:
+  * `type` (*String*) Specifies the type of the field to add. One of the core `amarkal-ui` components or a registered custom component.
   * `label` (*String*) Specifies the form label for this field.
   * `description` (*String*) Specifies a short description that will be printed below the field.
   * `table` (*Array*) An associative array with the following arguments:
@@ -67,8 +68,8 @@ This function can be used to add fields to the 'add term' and 'edit term' taxono
 
 **Example Usage**
 ```php
-// Add a text field to the category 'add' & 'edit' forms:
-amarkal_taxonomy_add_field('text', 'category', array(
+// Add a text field to the 'category' taxonomy 'add' & 'edit' forms:
+amarkal_taxonomy_add_field('category', 'cat_icon', array(
     'type'        => 'text',
     'label'       => 'Icon',
     'description' => 'The category\'s icon',
@@ -77,4 +78,7 @@ amarkal_taxonomy_add_field('text', 'category', array(
         'sortable'  => true
     )
 ));
+
+// Then you can retrieve the data using:
+$icon = get_term_meta( $term_id, 'cat_icon', true );
 ```
