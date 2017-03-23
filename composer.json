@@ -10,8 +10,18 @@
             "email": "hello@askupasoftware.com"
         }
     ],
+    "support": {
+        "issues": "https://github.com/askupasoftware/amarkal-taxonomy/issues",
+        "source": "https://github.com/askupasoftware/amarkal-taxonomy"
+    },
     "require": {
         "php": ">=5.3.0",
         "askupa-software/amarkal-ui": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Amarkal\\Taxonomy\\": "",
+            "files": ["bootstrap.php"]
+        }
     }
 }
