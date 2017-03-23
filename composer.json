@@ -4,6 +4,7 @@
     "type": "wordpress",
     "keywords": ["wordpress","admin","ui","form","user interface", "taxonomy"],
     "homepage": "https://github.com/askupasoftware/amarkal-taxonomy",
+    "license": "GPL-3.0",
     "authors": [
         {
             "name": "Askupa Software",
@@ -20,8 +21,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Amarkal\\Taxonomy\\": "",
-            "files": ["bootstrap.php"]
-        }
+            "Amarkal\\Taxonomy\\": ""
+        },
+        "files": ["bootstrap.php"]
     }
 }
