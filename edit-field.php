@@ -19,7 +19,7 @@ extends \Amarkal\UI\AbstractComponent
         $this->model['value'] = \get_term_meta($this->term_id, $this->name, true);
     }
     
-    public function get_script_path()
+    public function get_template_path()
     {
         return __DIR__.'/edit-field.phtml';
     }

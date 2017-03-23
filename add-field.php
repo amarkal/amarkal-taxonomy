@@ -14,7 +14,7 @@ extends \Amarkal\UI\AbstractComponent
         );
     }
     
-    public function get_script_path() 
+    public function get_template_path() 
     {
         return __DIR__.'/add-field.phtml';
     }
