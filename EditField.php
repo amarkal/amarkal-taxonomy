@@ -21,6 +21,6 @@ extends \Amarkal\UI\AbstractComponent
     
     public function get_template_path()
     {
-        return __DIR__.'/edit-field.phtml';
+        return __DIR__.'/EditField.phtml';
     }
 }

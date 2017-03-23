@@ -24,9 +24,9 @@ define( 'AMARKAL_TAXONOMY', true );
  */
 if( !class_exists('Composer\\Autoload\\ClassLoader') )
 {
-    require_once 'form.php';
-    require_once 'add-field.php';
-    require_once 'edit-field.php';
+    require_once 'Form.php';
+    require_once 'AddField.php';
+    require_once 'EditField.php';
 }
 
 if(!function_exists('amarkal_taxonomy_add_field'))
