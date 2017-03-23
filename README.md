@@ -7,7 +7,7 @@ A set of utility functions for taxonomies in WordPress.
 ![amarkal-taxonomy](https://askupasoftware.com/wp-content/uploads/2015/04/amarkal-taxonomy.png)
 
 ## Overview
-Using **amarkal-taxonomy** you can easily modify the taxonomy forms in the WordPress admin area and add custom fields to them. More utility functions will be added in the future.
+**amarkal-taxonomy** lets you add custom fields to taxonomies in WordPress, and optionally add columns to the taxonomy terms table. More utility functions will be added in the future.
 
 ## Installation
 
@@ -15,14 +15,12 @@ Using **amarkal-taxonomy** you can easily modify the taxonomy forms in the WordP
 
 If you are using the command line:  
 ```
-$ composer require askupa-software/amarkal-ui:dev-master
 $ composer require askupa-software/amarkal-taxonomy:dev-master
 ```
 
 Or simply add the following to your `composer.json` file:
 ```javascript
 "require": {
-    "askupa-software/amarkal-ui": "dev-master"
     "askupa-software/amarkal-taxonomy": "dev-master"
 }
 ```
@@ -46,7 +44,9 @@ require_once 'path/to/amarkal-ui/bootstrap.php';
 require_once 'path/to/amarkal-taxonomy/bootstrap.php';
 ```
 
-Now that **amarkal-taxonomy** is bootstrapped, the following functions become available for you to use:
+Now that **amarkal-taxonomy** is bootstrapped, you can use any of the functions listed in the following section.
+
+## Reference
 
 ### amarkal_taxonomy_add_field
 *Add a field to the add & edit forms of a given taxonomy.*
@@ -74,8 +74,8 @@ amarkal_taxonomy_add_field('category', 'cat_icon', array(
     'label'       => 'Icon',
     'description' => 'The category\'s icon',
     'table'       => array(
-        'show'      => true,
-        'sortable'  => true
+        'show'      => true,  // Add a column to the terms table
+        'sortable'  => true   // Make that column sortable
     )
 ));
 
