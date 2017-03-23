@@ -20,11 +20,14 @@ if( defined( 'AMARKAL_TAXONOMY' ) ) return;
 define( 'AMARKAL_TAXONOMY', true );
 
 /**
- * Load required classes
+ * Load required classes if not using composer
  */
-require_once 'form.php';
-require_once 'add-field.php';
-require_once 'edit-field.php';
+if( !class_exists('Composer\\Autoload\\ClassLoader') )
+{
+    require_once 'form.php';
+    require_once 'add-field.php';
+    require_once 'edit-field.php';
+}
 
 if(!function_exists('amarkal_taxonomy_add_field'))
 {
