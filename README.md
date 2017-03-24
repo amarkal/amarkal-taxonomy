@@ -30,21 +30,20 @@ $ composer install
 ```
 
 This will install the package in the directory `vendors/askupa-software/amarkal-taxonomy`.
+Now all you need to do is include the composer autoloader.
+
+```php
+require_once 'path/to/vendor/autoload.php';
+```
 
 ### Manually
 
 Download [amarkal-ui](https://github.com/askupasoftware/amarkal-ui/archive/master.zip) and [amarkal-taxonomy](https://github.com/askupasoftware/amarkal-taxonomy/archive/master.zip) from github and include them in your project.
 
-## Usage
-
-Before you can use **amarkal-taxonomy** in your project, you will need to bootstrap it:
-
 ```php
 require_once 'path/to/amarkal-ui/bootstrap.php';
 require_once 'path/to/amarkal-taxonomy/bootstrap.php';
 ```
-
-Now that **amarkal-taxonomy** is bootstrapped, you can use any of the functions listed in the following section.
 
 ## Reference
 
