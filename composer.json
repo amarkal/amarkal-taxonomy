@@ -23,6 +23,6 @@
         "psr-4": {
             "Amarkal\\Taxonomy\\": ""
         },
-        "files": ["bootstrap.php"]
+        "files": ["composer.php"]
     }
 }
