@@ -114,9 +114,10 @@ class Form
         
         foreach( $this->fields[$term->taxonomy] as $name => $props )
         {
-            if( isset($_POST[$name]) )
+            $term_meta = filter_input(INPUT_POST, $name);
+            if( null !== $term_meta )
             {
-                update_term_meta($term_id, $name, filter_input(INPUT_POST, $name));
+                update_term_meta($term_id, $name, $term_meta);
             }
         }
     }
@@ -194,12 +195,11 @@ class Form
      * @param type $args
      * @return string
      */
-    function sort_custom_column( $clauses, $taxonomies, $args )
+    public function sort_custom_column( $clauses, $taxonomies, $args )
     {
         $this->traverse_fields(function( $taxonomy, $name, $props ) use ( &$clauses, $args ) 
         {
             if( in_array($taxonomy, $args['taxonomy']) && 
-                $props['table']['show'] && 
                 $props['table']['sortable'] &&
                 $name === $args['orderby']
             )
