@@ -1,0 +1,7 @@
+<?php foreach($form->get_components() as $component): ?>
+    <div class="form-field <?php echo ($component->required ? 'form-required' : ''); ?>">
+        <label for="<?php echo $component->name ?>"><?php echo $component->label ?></label>
+        <?php echo $component->render(); ?>
+        <p><?php echo $component->description ?></p>
+    </div>
+<?php endforeach; ?>

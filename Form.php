@@ -13,9 +13,9 @@ class Form
     private static $instance;
     
     /**
-     * @var Array Stores all the registered fields for each taxonomy
+     * @var Array Stores a form for each taxonomy
      */
-    private $fields = array();
+    private $forms = array();
     
     /**
      * Returns the *Singleton* instance of this class.
@@ -35,13 +35,12 @@ class Form
      * Add a form field to both the add & edit forms for a given taxonomy.
      * 
      * @param string $taxonomy_name
-     * @param string $field_name
-     * @param array $field_props
+     * @param array $component
      * @throws \RuntimeException if duplicate names are registered under the same taxonomy
      */
-    public function add_field( $taxonomy_name, $field_name, $field_props )
+    public function add_field( $taxonomy_name, $component )
     {
-        if( !isset($this->fields[$taxonomy_name]) )
+        if( !isset($this->forms[$taxonomy_name]) )
         {
             // Add fields to taxonomy add and edit forms 
             add_action( "{$taxonomy_name}_add_form_fields", array($this, 'render_add_form') );
@@ -57,14 +56,12 @@ class Form
             add_filter( "manage_edit-{$taxonomy_name}_sortable_columns", array($this, 'modify_table_sortable_columns') );
             add_filter( 'terms_clauses', array($this, 'sort_custom_column'), 10, 3 );
             
-            $this->fields[$taxonomy_name] = array();
+            $this->forms[$taxonomy_name] = new \Amarkal\UI\Form();
         }
-
-        if( !isset($this->fields[$taxonomy_name][$field_name]))
-        {
-            $this->fields[$taxonomy_name][$field_name] = array_merge( $this->default_props(), $field_props );
-        }
-        else throw new \RuntimeException("A field named '$field_name' has already been registered in '$taxonomy_name'");
+        
+        $this->forms[$taxonomy_name]->add_component(
+            array_merge( $this->default_props(), $component )
+        );
     }
     
     /**
@@ -74,15 +71,17 @@ class Form
      */
     public function render_edit_form( $term )
     {
-        $fields = $this->fields[$term->taxonomy];
+        $form = $this->forms[$term->taxonomy];
+        $new_instance = array();
         
-        foreach( $fields as $name => $props )
+        foreach( $form->get_components() as $component )
         {
-            $props['name'] = $name;
-            $props['term_id'] = $term->term_id;
-            $field = new EditField($props);
-            echo $field->render();
+            $new_instance[$component->name] = \get_term_meta($term->term_id, $component->name, true);
         }
+        
+        $form->update($new_instance);
+        
+        include __DIR__.'/EditForm.phtml';
     }
     
     /**
@@ -92,14 +91,10 @@ class Form
      */
     public function render_add_form( $taxonomy )
     {
-        $fields = $this->fields[$taxonomy];
+        $form = $this->forms[$taxonomy];
+        $form->update();
         
-        foreach( $fields as $name => $props )
-        {
-            $props['name'] = $name;
-            $field = new AddField($props);
-            echo $field->render();
-        }
+        include __DIR__.'/AddForm.phtml';
     }
     
     /**
@@ -112,12 +107,12 @@ class Form
     {
         $term = \get_term( $term_id );
         
-        foreach( $this->fields[$term->taxonomy] as $name => $props )
+        foreach( $this->forms[$term->taxonomy]->get_components() as $component )
         {
-            $term_meta = filter_input(INPUT_POST, $name);
+            $term_meta = filter_input(INPUT_POST, $component->name);
             if( null !== $term_meta )
             {
-                update_term_meta($term_id, $name, $term_meta);
+                \update_term_meta($term_id, $component->name, $term_meta);
             }
         }
     }
@@ -130,11 +125,11 @@ class Form
      */
     function modify_table_columns( $columns )
     {   
-        $this->traverse_fields(function( $taxonomy, $name, $props ) use ( &$columns ) 
+        $this->traverse_components(function( $taxonomy, $component ) use ( &$columns ) 
         {
-            if( $props['table']['show'] )
+            if( $component->table['show'] )
             {
-                $columns[$name] = $props['label'];
+                $columns[$component->name] = $component->label;
             }
         });
         return $columns;
@@ -153,13 +148,13 @@ class Form
     function modify_table_content( $content, $column_name, $term_id )
     {   
         $term = \get_term($term_id);
-        $this->traverse_fields(function( $taxonomy, $name, $props ) use ( &$content, $column_name, $term ) 
+        $this->traverse_components(function( $taxonomy, $component ) use ( &$content, $column_name, $term ) 
         {
-            if( $props['table']['show'] && 
+            if( $component->table['show'] && 
                 $term->taxonomy === $taxonomy &&
-                $name === $column_name
+                $component->name === $column_name
             ) {
-                $content = \get_term_meta($term->term_id, $name, true);
+                $content = \get_term_meta($term->term_id, $component->name, true);
             }
         });
         return $content;
@@ -173,12 +168,12 @@ class Form
      */
     function modify_table_sortable_columns( $columns )
     {
-        $this->traverse_fields(function( $taxonomy, $name, $props ) use ( &$columns ) 
+        $this->traverse_components(function( $taxonomy, $component ) use ( &$columns ) 
         {
-            if( $props['table']['show'] && 
-                $props['table']['sortable']
+            if( $component->table['show'] && 
+                $component->table['sortable']
             ) {
-                $columns[$name] = $name;
+                $columns[$component->name] = $component->name;
             }
         });
         return $columns;
@@ -197,17 +192,17 @@ class Form
      */
     public function sort_custom_column( $clauses, $taxonomies, $args )
     {
-        $this->traverse_fields(function( $taxonomy, $name, $props ) use ( &$clauses, $args ) 
+        $this->traverse_components(function( $taxonomy, $component ) use ( &$clauses, $args ) 
         {
             if( in_array($taxonomy, $args['taxonomy']) && 
-                $props['table']['sortable'] &&
-                $name === $args['orderby']
+                $component->table['sortable'] &&
+                $component->name === $args['orderby']
             )
             {
                 global $wpdb;
                 // tt refers to the $wpdb->term_taxonomy table
                 $clauses['join'] .= " LEFT JOIN {$wpdb->termmeta} AS tm ON t.term_id = tm.term_id";
-                $clauses['where'] = "tt.taxonomy = '{$taxonomy}' AND (tm.meta_key = '{$name}' OR tm.meta_key IS NULL)";
+                $clauses['where'] = "tt.taxonomy = '{$taxonomy}' AND (tm.meta_key = '{$component->name}' OR tm.meta_key IS NULL)";
                 $clauses['orderby'] = "ORDER BY tm.meta_value";
             }
         });
@@ -239,13 +234,13 @@ class Form
      * 
      * @param collable $callback Called on each iteration
      */
-    private function traverse_fields( $callback )
+    private function traverse_components( $callback )
     {
-        foreach( $this->fields as $taxonomy => $fields )
+        foreach( $this->forms as $taxonomy => $form )
         {
-            foreach( $fields as $name => $props )
+            foreach( $form->get_components() as $component )
             {
-                $callback( $taxonomy, $name, $props );
+                $callback( $taxonomy, $component );
             }
         }
     }
