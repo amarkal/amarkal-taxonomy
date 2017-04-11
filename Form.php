@@ -129,7 +129,7 @@ class Form
         {
             if( $component->table['show'] )
             {
-                $columns[$component->name] = $component->label;
+                $columns[$component->name] = $component->title;
             }
         });
         return $columns;
@@ -220,7 +220,7 @@ class Form
     {
         return array(
             'type'          => null,
-            'label'         => null,
+            'title'         => null,
             'description'   => null,
             'table'         => array(
                 'show'      => false,

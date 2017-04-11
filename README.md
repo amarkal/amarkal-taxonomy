@@ -59,7 +59,7 @@ This function can be used to add fields to the 'add term' and 'edit term' taxono
 * `$field_name` (*String*)  Specifies the name/id of the field.
 * `$field_props` (*Array*)  Specifies the UI component's properties. This array should have the original UI component properties as specified in [amarkal-ui](https://github.com/askupasoftware/amarkal-ui), as well as the following:
   * `type` (*String*) Specifies the type of the field to add. One of the core `amarkal-ui` components or a registered custom component.
-  * `label` (*String*) Specifies the form label for this field.
+  * `title` (*String*) Specifies the form title for this field.
   * `description` (*String*) Specifies a short description that will be printed below the field.
   * `table` (*Array*) An associative array with the following arguments:
     * `show` (*Boolean*) Specifies whether to add a column for this field in the taxonomy terms table.
@@ -70,7 +70,7 @@ This function can be used to add fields to the 'add term' and 'edit term' taxono
 // Add a text field to the 'category' taxonomy 'add' & 'edit' forms:
 amarkal_taxonomy_add_field('category', 'cat_icon', array(
     'type'        => 'text',
-    'label'       => 'Icon',
+    'title'       => 'Icon',
     'description' => 'The category\'s icon',
     'table'       => array(
         'show'      => true,  // Add a column to the terms table
