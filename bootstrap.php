@@ -16,6 +16,4 @@ if(false !== (require_once 'functions.php'))
 {
     // Load required classes if not using composer
     require_once 'Form.php';
-    require_once 'AddField.php';
-    require_once 'EditField.php';
 }
