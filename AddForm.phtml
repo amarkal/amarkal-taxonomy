@@ -1,4 +1,4 @@
-<?php foreach($form->get_components() as $component): ?>
+<?php foreach($form->get_component_list()->get_all() as $component): ?>
     <div class="form-field <?php echo ($component->required ? 'form-required' : ''); ?>">
         <label for="<?php echo $component->name ?>"><?php echo $component->title ?></label>
         <?php echo $component->render(); ?>

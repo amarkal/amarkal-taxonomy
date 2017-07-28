@@ -59,7 +59,7 @@ class Form
             $this->forms[$taxonomy_name] = new \Amarkal\UI\Form();
         }
         
-        $this->forms[$taxonomy_name]->add_component(
+        $this->forms[$taxonomy_name]->get_component_list()->add_component(
             array_merge( $this->default_props(), $component )
         );
     }
@@ -74,7 +74,7 @@ class Form
         $form = $this->forms[$term->taxonomy];
         $new_instance = array();
         
-        foreach( $form->get_components() as $component )
+        foreach( $form->get_component_list()->get_value_components() as $component )
         {
             $new_instance[$component->name] = \get_term_meta($term->term_id, $component->name, true);
         }
@@ -106,8 +106,9 @@ class Form
     function update_term( $term_id ) 
     {
         $term = \get_term( $term_id );
-        
-        foreach( $this->forms[$term->taxonomy]->get_components() as $component )
+        $form = $this->forms[$term->taxonomy];
+
+        foreach( $form->get_component_list()->get_value_components() as $component )
         {
             $term_meta = filter_input(INPUT_POST, $component->name);
             if( null !== $term_meta )
@@ -238,7 +239,7 @@ class Form
     {
         foreach( $this->forms as $taxonomy => $form )
         {
-            foreach( $form->get_components() as $component )
+            foreach( $form->get_component_list()->get_value_components() as $component )
             {
                 $callback( $taxonomy, $component );
             }
