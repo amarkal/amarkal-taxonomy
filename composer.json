@@ -3,7 +3,7 @@
     "description": "A set of utility functions for taxonomies in WordPress",
     "type": "wordpress",
     "keywords": ["wordpress","admin","ui","form","user interface", "taxonomy"],
-    "homepage": "https://github.com/askupasoftware/amarkal-taxonomy",
+    "homepage": "https://github.com/amarkal/amarkal-taxonomy",
     "license": "GPL-3.0",
     "authors": [
         {
@@ -12,8 +12,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/askupasoftware/amarkal-taxonomy/issues",
-        "source": "https://github.com/askupasoftware/amarkal-taxonomy"
+        "issues": "https://github.com/amarkal/amarkal-taxonomy/issues",
+        "source": "https://github.com/amarkal/amarkal-taxonomy"
     },
     "require": {
         "php": ">=5.3.0",

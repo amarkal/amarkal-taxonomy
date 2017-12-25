@@ -1,8 +1,8 @@
-# amarkal-taxonomy [![Build Status](https://scrutinizer-ci.com/g/askupasoftware/amarkal-taxonomy/badges/build.png?b=master)](https://scrutinizer-ci.com/g/askupasoftware/amarkal-taxonomy/build-status/master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/askupasoftware/amarkal-taxonomy/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/askupasoftware/amarkal-taxonomy/?branch=master) [![License](https://img.shields.io/badge/license-GPL--3.0%2B-red.svg)](https://raw.githubusercontent.com/askupasoftware/amarkal-taxonomy/master/LICENSE)
+# amarkal-taxonomy [![Build Status](https://scrutinizer-ci.com/g/amarkal/amarkal-taxonomy/badges/build.png?b=master)](https://scrutinizer-ci.com/g/amarkal/amarkal-taxonomy/build-status/master) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/amarkal/amarkal-taxonomy/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/amarkal/amarkal-taxonomy/?branch=master) [![License](https://img.shields.io/badge/license-GPL--3.0%2B-red.svg)](https://raw.githubusercontent.com/amarkal/amarkal-taxonomy/master/LICENSE)
 A set of utility functions for taxonomies in WordPress.
 
 **Tested up to:** WordPress 4.7  
-**Dependencies**: *[amarkal-ui](https://github.com/askupasoftware/amarkal-ui)*
+**Dependencies**: *[amarkal-ui](https://github.com/amarkal/amarkal-ui)*
 
 ![amarkal-taxonomy](https://askupasoftware.com/wp-content/uploads/2015/04/amarkal-taxonomy.png)
 
@@ -38,7 +38,7 @@ require_once 'path/to/vendor/autoload.php';
 
 ### Manually
 
-Download [amarkal-ui](https://github.com/askupasoftware/amarkal-ui/archive/master.zip) and [amarkal-taxonomy](https://github.com/askupasoftware/amarkal-taxonomy/archive/master.zip) from github and include them in your project.
+Download [amarkal-ui](https://github.com/amarkal/amarkal-ui/archive/master.zip) and [amarkal-taxonomy](https://github.com/amarkal/amarkal-taxonomy/archive/master.zip) from github and include them in your project.
 
 ```php
 require_once 'path/to/amarkal-ui/bootstrap.php';
@@ -52,12 +52,12 @@ require_once 'path/to/amarkal-taxonomy/bootstrap.php';
 ```php
 amarkal_taxonomy_add_field( $taxonomy_name, $field_type, $field_props )
 ```
-This function can be used to add fields to the 'add term' and 'edit term' taxonomy forms. See [amarkal-ui](https://github.com/askupasoftware/amarkal-ui/) for supported field types, or register your own field type using `amarkal_ui_register_component`.
+This function can be used to add fields to the 'add term' and 'edit term' taxonomy forms. See [amarkal-ui](https://github.com/amarkal/amarkal-ui/) for supported field types, or register your own field type using `amarkal_ui_register_component`.
 
 **Parameters**  
 * `$taxonomy_name` (*String*) Specifies the taxonomy name, e.g. 'category'.
 * `$field_name` (*String*)  Specifies the name/id of the field.
-* `$field_props` (*Array*)  Specifies the UI component's properties. This array should have the original UI component properties as specified in [amarkal-ui](https://github.com/askupasoftware/amarkal-ui), as well as the following:
+* `$field_props` (*Array*)  Specifies the UI component's properties. This array should have the original UI component properties as specified in [amarkal-ui](https://github.com/amarkal/amarkal-ui), as well as the following:
   * `type` (*String*) Specifies the type of the field to add. One of the core `amarkal-ui` components or a registered custom component.
   * `title` (*String*) Specifies the form title for this field.
   * `description` (*String*) Specifies a short description that will be printed below the field.

@@ -8,7 +8,7 @@
  * @package   amarkal-taxonomy
  * @depends   amarkal-ui
  * @author    Askupa Software <hello@askupasoftware.com>
- * @link      https://github.com/askupasoftware/amarkal-taxonomy
+ * @link      https://github.com/amarkal/amarkal-taxonomy
  * @copyright 2017 Askupa Software
  */
 
